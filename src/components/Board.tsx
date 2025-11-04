@@ -1,15 +1,15 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-import { StateType } from '../reducers';
-import { Direction } from '../types/Direction';
-import { Point } from '../types/Models';
-import { BoardType } from '../functions/board';
-import { Animation, AnimationType } from '../types/Animations';
-import { animationDuration } from '../config';
-import { moveAction } from '../actions';
-import BoardTile from './BoardTile';
-import Overlay from './Overlay';
+import { StateType } from "../reducers";
+import { Direction } from "../types/Direction";
+import { Point } from "../types/Models";
+import { BoardType } from "../functions/board";
+import { Animation, AnimationType } from "../types/Animations";
+import { animationDuration } from "../config";
+import { moveAction } from "../actions";
+import BoardTile from "./BoardTile";
+import Overlay from "./Overlay";
 
 const Board: React.FC = () => {
   const dispatch = useDispatch();
@@ -31,28 +31,36 @@ const Board: React.FC = () => {
 
   useEffect(() => {
     const keydownListener = (e: KeyboardEvent) => {
-      e.preventDefault();
+      // Only handle arrow keys if no modifier keys are pressed
+      // This allows browser shortcuts like Command+R to work
+      if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) {
+        return;
+      }
 
       switch (e.key) {
-        case 'ArrowDown':
+        case "ArrowDown":
+          e.preventDefault();
           onMove(Direction.DOWN);
           break;
-        case 'ArrowUp':
+        case "ArrowUp":
+          e.preventDefault();
           onMove(Direction.UP);
           break;
-        case 'ArrowLeft':
+        case "ArrowLeft":
+          e.preventDefault();
           onMove(Direction.LEFT);
           break;
-        case 'ArrowRight':
+        case "ArrowRight":
+          e.preventDefault();
           onMove(Direction.RIGHT);
           break;
       }
     };
 
-    window.addEventListener('keydown', keydownListener);
+    window.addEventListener("keydown", keydownListener);
 
     return () => {
-      window.removeEventListener('keydown', keydownListener);
+      window.removeEventListener("keydown", keydownListener);
     };
   }, [onMove]);
 
@@ -130,10 +138,10 @@ const Board: React.FC = () => {
     }
 
     const moveAnimations = animations.filter(
-      animation => animation.type === AnimationType.MOVE
+      (animation) => animation.type === AnimationType.MOVE
     );
     const otherAnimations = animations.filter(
-      animation => animation.type !== AnimationType.MOVE
+      (animation) => animation.type !== AnimationType.MOVE
     );
 
     if (moveAnimations.length > 0) {
@@ -156,7 +164,7 @@ const Board: React.FC = () => {
   return (
     <div
       className={`board board-${boardSize}`}
-      style={{ '--board-size': boardSize } as any}
+      style={{ "--board-size": boardSize } as any}
       onMouseDown={onMouseStart}
       onMouseUp={onMouseEnd}
       onMouseLeave={onMouseEnd}
@@ -169,7 +177,7 @@ const Board: React.FC = () => {
           value={value}
           key={i}
           animations={renderedAnimations?.filter(
-            animation => animation.index === i
+            (animation) => animation.index === i
           )}
         />
       ))}
