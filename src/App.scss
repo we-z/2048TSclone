@@ -8,11 +8,84 @@ html {
   font-size: 16px;
 }
 
+/* Light Mode Colors */
+:root[data-theme="light"] {
+  --bg-primary: #faf8ef;
+  --bg-board-tile: #cfcfcf;
+  --text-primary: #776e65;
+  --text-light: #eee4da;
+  --button-bg: #8f7a66;
+  --button-text: white;
+  --score-bg: #bbada0;
+  --overlay-bg: rgba(238, 228, 218, 0.73);
+  --overlay-victory-bg: rgba(237, 194, 46, 0.5);
+  --tile-2-bg: #eee4da;
+  --tile-4-bg: #ede0c8;
+  --tile-8-bg: #f2b179;
+  --tile-16-bg: #f59563;
+  --tile-32-bg: #f67c5f;
+  --tile-64-bg: #f65e3b;
+  --tile-128-bg: #edcf72;
+  --tile-256-bg: #edcc61;
+  --tile-512-bg: #edc850;
+  --tile-1024-bg: #edc53f;
+  --tile-2048-bg: #edc22e;
+}
+
+/* Dark Mode Colors */
+:root[data-theme="dark"] {
+  --bg-primary: #1a1a2e;
+  --bg-board-tile: #2a2a3e;
+  --text-primary: #e1e1e6;
+  --text-light: #c4c4cc;
+  --button-bg: #6c5ce7;
+  --button-text: white;
+  --score-bg: #2d2d44;
+  --overlay-bg: rgba(26, 26, 46, 0.85);
+  --overlay-victory-bg: rgba(108, 92, 231, 0.6);
+  --tile-2-bg: #2d3748;
+  --tile-4-bg: #374151;
+  --tile-8-bg: #f59e0b;
+  --tile-16-bg: #f97316;
+  --tile-32-bg: #ef4444;
+  --tile-64-bg: #dc2626;
+  --tile-128-bg: #fbbf24;
+  --tile-256-bg: #f59e0b;
+  --tile-512-bg: #d97706;
+  --tile-1024-bg: #b45309;
+  --tile-2048-bg: #92400e;
+}
+
+/* Default to dark mode */
+:root {
+  --bg-primary: #1a1a2e;
+  --bg-board-tile: #2a2a3e;
+  --text-primary: #e1e1e6;
+  --text-light: #c4c4cc;
+  --button-bg: #6c5ce7;
+  --button-text: white;
+  --score-bg: #2d2d44;
+  --overlay-bg: rgba(26, 26, 46, 0.85);
+  --overlay-victory-bg: rgba(108, 92, 231, 0.6);
+  --tile-2-bg: #2d3748;
+  --tile-4-bg: #374151;
+  --tile-8-bg: #f59e0b;
+  --tile-16-bg: #f97316;
+  --tile-32-bg: #ef4444;
+  --tile-64-bg: #dc2626;
+  --tile-128-bg: #fbbf24;
+  --tile-256-bg: #f59e0b;
+  --tile-512-bg: #d97706;
+  --tile-1024-bg: #b45309;
+  --tile-2048-bg: #92400e;
+}
+
 html,
 body {
   margin: 0;
-  background: #faf8ef;
-  color: #776e65;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1 {
@@ -21,15 +94,15 @@ h1 {
 }
 
 button {
-  background: #8f7a66;
-  color: white;
+  background: var(--button-bg);
+  color: var(--button-text);
   font-weight: bold;
   border: none;
   cursor: pointer;
   padding: 10px 20px;
   font-size: 1.1rem;
   border-radius: 6px;
-  transition: var(--animation-duration) ease-in-out all;
+  transition: all 0.3s ease;
 
   &:disabled {
     opacity: 0.5;
@@ -38,6 +111,55 @@ button {
 
   &:not(:disabled):hover {
     opacity: 0.8;
+    transform: translateY(-1px);
+  }
+
+  &:not(:disabled):active {
+    transform: translateY(0);
+  }
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--button-bg);
+  color: var(--button-text);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  &-icon {
+    width: 24px;
+    height: 24px;
+    animation: rotate-in 0.3s ease;
+  }
+}
+
+@keyframes rotate-in {
+  0% {
+    transform: rotate(-90deg);
+    opacity: 0;
+  }
+  100% {
+    transform: rotate(0);
+    opacity: 1;
   }
 }
 
@@ -75,22 +197,23 @@ button {
 
     &-score {
       position: relative;
-      background: #bbada0;
+      background: var(--score-bg);
       padding: 1px 25px;
       border-radius: 6px;
       font-weight: bold;
       text-align: center;
       margin-left: 5px;
+      transition: background 0.3s ease;
 
       div:first-child {
-        color: #eee4da;
+        color: var(--text-light);
         text-transform: uppercase;
         font-size: 0.8rem;
         margin-top: 5px;
       }
 
       div:nth-child(2) {
-        color: white;
+        color: var(--button-text);
         margin-top: -5px;
         font-size: 1.6rem;
       }
@@ -111,11 +234,12 @@ button {
 
 .info {
   line-height: 1.65;
-  color: #776e65;
+  color: var(--text-primary);
   font-weight: 500;
+  transition: color 0.3s ease;
 
   a {
-    color: #776e65;
+    color: var(--text-primary);
     font-weight: bold;
   }
 }
@@ -145,9 +269,10 @@ button {
     position: relative;
     border-radius: 9px;
     padding-bottom: 100%;
-    background: #c0c0c0;
+    background: var(--bg-board-tile);
     line-height: 0;
     font-size: 1.6rem;
+    transition: background 0.3s ease;
 
     &-value {
       background: #3c3a32;
@@ -166,6 +291,7 @@ button {
       line-height: 0;
       border-radius: 9px;
       z-index: 9;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
     &-new {
@@ -177,58 +303,58 @@ button {
     }
 
     &-2 {
-      background: #eee4da;
-      color: #776e65;
+      background: var(--tile-2-bg);
+      color: var(--text-primary);
       font-size: 1.7em;
     }
 
     &-4 {
-      background: #ede0c8;
-      color: #776e65;
+      background: var(--tile-4-bg);
+      color: var(--text-primary);
       font-size: 1.7em;
     }
 
     &-8 {
-      background: #f2b179;
+      background: var(--tile-8-bg);
       font-size: 1.7em;
     }
 
     &-16 {
-      background: #f59563;
+      background: var(--tile-16-bg);
       font-size: 1.7em;
     }
 
     &-32 {
-      background: #f67c5f;
+      background: var(--tile-32-bg);
       font-size: 1.7em;
     }
 
     &-64 {
-      background: #f65e3b;
+      background: var(--tile-64-bg);
       font-size: 1.7em;
     }
 
     &-128 {
-      background: #edcf72;
+      background: var(--tile-128-bg);
       font-size: 1.3em;
     }
 
     &-256 {
-      background: #edcc61;
+      background: var(--tile-256-bg);
       font-size: 1.3em;
     }
 
     &-512 {
-      background: #edc850;
+      background: var(--tile-512-bg);
       font-size: 1.3em;
     }
 
     &-1024 {
-      background: #edc53f;
+      background: var(--tile-1024-bg);
     }
 
     &-2048 {
-      background: #edc22e;
+      background: var(--tile-2048-bg);
     }
   }
 
@@ -253,15 +379,16 @@ button {
   justify-content: center;
   align-items: center;
 
-  background: rgba(238, 228, 218, 0.73);
+  background: var(--overlay-bg);
   animation: reveal 0.4s ease-in-out;
+  transition: background 0.3s ease;
 
   &-defeat {
-    background: rgba(238, 228, 218, 0.73);
+    background: var(--overlay-bg);
   }
 
   &-victory {
-    background: rgba(237, 194, 46, 0.5);
+    background: var(--overlay-victory-bg);
     color: #f9f6f2;
   }
 
