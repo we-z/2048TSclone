@@ -1,7 +1,7 @@
-import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { resetAction, undoAction } from '../actions';
-import { StateType } from '../reducers';
+import React, { useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { resetAction, undoAction } from "../actions";
+import { StateType } from "../reducers";
 
 const Header: React.FC = () => {
   const dispatch = useDispatch();
@@ -17,7 +17,7 @@ const Header: React.FC = () => {
   return (
     <div className="header">
       <div className="header-row">
-        <h1>2048</h1>
+        {/* <h1>2048</h1> */}
         <div className="header-scores">
           <div className="header-scores-score">
             <div>Score</div>
@@ -35,9 +35,9 @@ const Header: React.FC = () => {
         </div>
       </div>
       <div className="header-row">
-        <div>
+        {/* <div>
           Join the numbers and get to the <strong>2048 tile!</strong>
-        </div>
+        </div> */}
         <div className="header-buttons">
           <button onClick={undo} disabled={!previousBoard}>
             Undo
