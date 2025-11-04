@@ -132,7 +132,7 @@ button {
 
 .board {
   position: relative;
-  background: #bbada0;
+  background: transparent;
   border-radius: 6px;
   display: grid;
   grid-template-columns: repeat(var(--board-size), 1fr);
@@ -143,9 +143,9 @@ button {
 
   &-tile {
     position: relative;
-    border-radius: 3px;
+    border-radius: 9px;
     padding-bottom: 100%;
-    background: #cdc1b4;
+    background: #c0c0c0;
     line-height: 0;
     font-size: 1.6rem;
 
@@ -164,7 +164,7 @@ button {
       justify-content: center;
       align-items: center;
       line-height: 0;
-      border-radius: 3px;
+      border-radius: 9px;
       z-index: 9;
     }
 
