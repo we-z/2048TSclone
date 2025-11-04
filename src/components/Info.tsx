@@ -11,10 +11,7 @@ const Info: React.FC = () => {
         functional components are used here. This project doesn't rely on canvas
         or element refs.
       </p>
-      <p>
-        Developed by <a href="https://github.com/mat-sz">Mat Sz</a>. Source code
-        available at <a href="https://github.com/mat-sz/2048">mat-sz/2048</a>.
-      </p> */}
+      */}
     </div>
   );
 };
