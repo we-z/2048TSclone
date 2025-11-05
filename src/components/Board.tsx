@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { StateType } from "../reducers";
 import { Direction } from "../types/Direction";
-import { Point } from "../types/Models";
 import { BoardType } from "../functions/board";
 import { Animation, AnimationType } from "../types/Animations";
 import { animationDuration } from "../config";
@@ -16,8 +15,6 @@ const Board: React.FC = () => {
   const board = useSelector((state: StateType) => state.board);
   const boardSize = useSelector((state: StateType) => state.boardSize);
   const animations = useSelector((state: StateType) => state.animations);
-  const startPointerLocation = useRef<Point>();
-  const currentPointerLocation = useRef<Point>();
 
   const onMove = useCallback(
     (direction: Direction) => dispatch(moveAction(direction)),
@@ -64,127 +61,6 @@ const Board: React.FC = () => {
     };
   }, [onMove]);
 
-  const finishPointer = useCallback(
-    (a: Point, b: Point) => {
-      const distance = Math.sqrt((b.y - a.y) ** 2 + (b.x - a.x) ** 2);
-      if (distance < 20) {
-        return;
-      }
-
-      const angle = (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI;
-      if (angle < -135 || angle > 135) {
-        onMove(Direction.LEFT);
-      } else if (angle < -45) {
-        onMove(Direction.UP);
-      } else if (angle < 45) {
-        onMove(Direction.RIGHT);
-      } else if (angle < 135) {
-        onMove(Direction.DOWN);
-      }
-    },
-    [onMove]
-  );
-
-  const onTouchStart = useCallback((e: React.TouchEvent) => {
-    const target = e.target as HTMLElement;
-    // Allow buttons and other interactive elements to handle their own touch events
-    if (
-      target.tagName === "BUTTON" ||
-      target.closest("button") ||
-      target.closest("a") ||
-      target.isContentEditable
-    ) {
-      startPointerLocation.current = undefined; // Clear any previous tracking
-      e.stopPropagation(); // Prevent event from being handled by swipe logic
-      return;
-    }
-    e.preventDefault();
-    const touch = e.touches[0];
-    if (touch) {
-      const point: Point = { x: touch.pageX, y: touch.pageY };
-      startPointerLocation.current = point;
-    }
-  }, []);
-  const onTouchMove = useCallback((e: React.TouchEvent) => {
-    const target = e.target as HTMLElement;
-    // Allow buttons and other interactive elements to handle their own touch events
-    if (
-      target.tagName === "BUTTON" ||
-      target.closest("button") ||
-      target.closest("a") ||
-      target.isContentEditable
-    ) {
-      e.stopPropagation(); // Prevent event from being handled by swipe logic
-      return;
-    }
-    e.preventDefault();
-    const touch = e.touches[0];
-    if (touch) {
-      const point: Point = { x: touch.pageX, y: touch.pageY };
-      currentPointerLocation.current = point;
-    }
-  }, []);
-  const onTouchEnd = useCallback(
-    (e: React.TouchEvent) => {
-      // Only process swipe if we have a starting point
-      if (!startPointerLocation.current || !currentPointerLocation.current) {
-        e.stopPropagation(); // Prevent swipe handling if no starting point
-        return;
-      }
-
-      const touch = e.changedTouches[0];
-      if (!touch) {
-        startPointerLocation.current = undefined;
-        currentPointerLocation.current = undefined;
-        return;
-      }
-
-      // Check if the touch ended on an interactive element
-      const endElement = document.elementFromPoint(
-        touch.clientX,
-        touch.clientY
-      ) as HTMLElement;
-      if (
-        endElement &&
-        (endElement.tagName === "BUTTON" ||
-          endElement.closest("button") ||
-          endElement.closest("a") ||
-          endElement.isContentEditable)
-      ) {
-        // If touch ended on a button, allow it to handle the click
-        startPointerLocation.current = undefined;
-        currentPointerLocation.current = undefined;
-        e.stopPropagation(); // Prevent swipe handling
-        return;
-      }
-
-      // Otherwise, process as a swipe
-      e.preventDefault();
-      finishPointer(
-        startPointerLocation.current,
-        currentPointerLocation.current
-      );
-
-      startPointerLocation.current = undefined;
-      currentPointerLocation.current = undefined;
-    },
-    [finishPointer]
-  );
-
-  const onMouseStart = useCallback((e: React.MouseEvent) => {
-    const point: Point = { x: e.pageX, y: e.pageY };
-    startPointerLocation.current = point;
-  }, []);
-  const onMouseEnd = useCallback(
-    (e: React.MouseEvent) => {
-      if (startPointerLocation.current) {
-        finishPointer(startPointerLocation.current, { x: e.pageX, y: e.pageY });
-        startPointerLocation.current = undefined;
-      }
-    },
-    [finishPointer]
-  );
-
   useEffect(() => {
     if (!animations) {
       setRenderedBoard([...board]);
@@ -219,12 +95,6 @@ const Board: React.FC = () => {
     <div
       className={`board board-${boardSize}`}
       style={{ "--board-size": boardSize } as any}
-      onMouseDown={onMouseStart}
-      onMouseUp={onMouseEnd}
-      onMouseLeave={onMouseEnd}
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
     >
       {renderedBoard.map((value, i) => (
         <BoardTile
