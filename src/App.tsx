@@ -5,7 +5,7 @@ import { animationDuration, gridGap } from "./config";
 import Header from "./components/Header";
 import Board from "./components/Board";
 import Info from "./components/Info";
-import BoardSizePicker from "./components/BoardSizePicker";
+// import BoardSizePicker from "./components/BoardSizePicker";
 import ThemeToggle from "./components/ThemeToggle";
 
 const App: React.FC = () => {
@@ -38,7 +38,7 @@ const App: React.FC = () => {
       <div className="page">
         <Header />
         <Board />
-        <BoardSizePicker />
+        {/* <BoardSizePicker /> */}
         <Info />
       </div>
     </div>
