@@ -1,4 +1,3 @@
-<img alt="2048" align="left" width="120" hspace="20" src="https://raw.githubusercontent.com/mat-sz/2048/master/public/logo512.png">
 
 # 2048 &bull; [Demo](https://demo.mat.dev/2048/)
 
