@@ -339,8 +339,11 @@ button {
         font-size: 1.1em;
       }
 
-      &-circle {
-        font-size: 1.2em;
+      &-pentagon {
+        width: 1em;
+        height: 1em;
+        flex-shrink: 0;
+        /* Regular pentagon with rounded corners via stroke-linejoin */
       }
     }
 
