@@ -10,20 +10,13 @@ export function newTileValue() {
 
 /**
  * Merges two tiles following the circular rule:
- * 1 + 1 = 2 (triangle -> square)
- * 2 + 2 = 3 (square -> pentagon)
- * 3 + 3 = 4 (pentagon -> hexagon)
- * 4 + 4 = 1 (hexagon -> back to triangle)
+ * Numbers 1-8 increment by 1 on merge, wrapping around from 8 to 1
+ * 1 + 1 = 2, 2 + 2 = 3, ..., 7 + 7 = 8, 8 + 8 = 1
  */
 function mergeTiles(value1: number, value2: number): number | null {
-  if (
-    value1 === value2 &&
-    (value1 === 1 || value1 === 2 || value1 === 3 || value1 === 4)
-  ) {
-    if (value1 === 1) return 2;
-    if (value1 === 2) return 3;
-    if (value1 === 3) return 4;
-    if (value1 === 4) return 1;
+  if (value1 === value2 && value1 >= 1 && value1 <= 8) {
+    // Increment by 1, wrapping around from 8 to 1
+    return ((value1 - 1 + 1) % 8) + 1;
   }
   return null;
 }
@@ -209,7 +202,7 @@ export function updateBoard(
 
       while (
         board[below] === 0 ||
-        (!merged && board[i] === board[below] && board[i] >= 1 && board[i] <= 4)
+        (!merged && board[i] === board[below] && board[i] >= 1 && board[i] <= 8)
       ) {
         if (below === lastMergedIndex) {
           break;

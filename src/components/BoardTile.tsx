@@ -28,63 +28,9 @@ function findAnimation<T extends Animation>(
 }
 
 function renderTileContent(value: number): React.ReactNode {
-  switch (value) {
-    case 1:
-      return (
-        <svg
-          className="tile-shape tile-shape-triangle"
-          viewBox="0 0 100 100"
-          preserveAspectRatio="xMidYMid meet"
-        >
-          <path
-            d="M 50,15.3 L 8,88 L 92,88 Z"
-            fill="currentColor"
-            stroke="currentColor"
-            strokeWidth="9"
-            strokeLinejoin="round"
-            strokeLinecap="round"
-          />
-        </svg>
-      );
-    case 2:
-      return <span className="tile-shape tile-shape-square">■</span>;
-    case 3:
-      return (
-        <svg
-          className="tile-shape tile-shape-pentagon"
-          viewBox="0 0 100 100"
-          preserveAspectRatio="xMidYMid meet"
-        >
-          <path
-            d="M 50,10 L 88.04,37.64 L 73.51,82.36 L 26.49,82.36 L 11.96,37.64 Z"
-            fill="currentColor"
-            stroke="currentColor"
-            strokeWidth="9"
-            strokeLinejoin="round"
-            strokeLinecap="round"
-          />
-        </svg>
-      );
-    case 4:
-      return (
-        <svg
-          className="tile-shape tile-shape-hexagon"
-          viewBox="0 0 100 100"
-          preserveAspectRatio="xMidYMid meet"
-        >
-          <path
-            d="M 50,10 L 84.64,30 L 84.64,70 L 50,90 L 15.36,70 L 15.36,30 Z"
-            fill="currentColor"
-            stroke="currentColor"
-            strokeWidth="9"
-            strokeLinejoin="round"
-            strokeLinecap="round"
-          />
-        </svg>
-      );
-    default:
-      return value;
-  }
+  // Loop numbers 1 through 8
+  const displayNumber = ((value - 1) % 8) + 1;
+  return displayNumber;
 }
 
 const BoardTile: React.FC<BoardTileProps> = ({ value, animations }) => {
