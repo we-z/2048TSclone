@@ -10,7 +10,7 @@ import {
 } from "../functions/board";
 import { Direction } from "../types/Direction";
 import { getStoredData, setStoredData } from "../functions/localStorage";
-import { Animation } from "../types/Animations";
+import { Animation, AnimationType } from "../types/Animations";
 import { defaultBoardSize, victoryTileValue } from "../config";
 
 export interface StateType {
@@ -22,6 +22,9 @@ export interface StateType {
 
   /** Previous board. */
   previousBoard?: BoardType;
+
+  /** Previous direction of the last move. */
+  previousDirection?: Direction;
 
   /** Was 2048 tile found? */
   victory: boolean;
@@ -95,6 +98,7 @@ function applicationState(state = initialState, action: ActionModel) {
         const direction = action.value as Direction;
         const update = updateBoard(newState.board, direction);
         newState.previousBoard = [...newState.board];
+        newState.previousDirection = direction;
         newState.board = update.board;
         newState.score += update.scoreIncrease;
         newState.animations = update.animations;
@@ -107,12 +111,80 @@ function applicationState(state = initialState, action: ActionModel) {
         break;
       }
 
+      // Store animations before changing board state
+      const storedAnimations = newState.animations;
+
+      // Restore previous board
       newState.board = newState.previousBoard;
       newState.previousBoard = undefined;
 
       if (newState.scoreIncrease) {
         newState.score -= newState.scoreIncrease;
       }
+
+      // Generate reverse animations by reversing the stored forward animations
+      // The stored animations show tiles moving from previousBoard to current board
+      // We need to reverse them to show tiles moving back
+      const reverseAnimations: Animation[] = [];
+      if (newState.previousDirection && storedAnimations) {
+        const boardSize = Math.sqrt(newState.board.length);
+
+        // For each move animation, reverse it
+        for (const anim of storedAnimations) {
+          if (anim.type === AnimationType.MOVE) {
+            // Calculate where the tile ended up (destination)
+            let sourceRow = Math.floor(anim.index / boardSize);
+            let sourceCol = anim.index % boardSize;
+
+            switch (anim.direction) {
+              case Direction.UP:
+                sourceRow -= anim.value;
+                break;
+              case Direction.DOWN:
+                sourceRow += anim.value;
+                break;
+              case Direction.LEFT:
+                sourceCol -= anim.value;
+                break;
+              case Direction.RIGHT:
+                sourceCol += anim.value;
+                break;
+            }
+
+            const destIndex = sourceRow * boardSize + sourceCol;
+
+            // Reverse the direction
+            let reverseDirection: Direction;
+            switch (anim.direction) {
+              case Direction.UP:
+                reverseDirection = Direction.DOWN;
+                break;
+              case Direction.DOWN:
+                reverseDirection = Direction.UP;
+                break;
+              case Direction.LEFT:
+                reverseDirection = Direction.RIGHT;
+                break;
+              case Direction.RIGHT:
+                reverseDirection = Direction.LEFT;
+                break;
+            }
+
+            // Create reverse animation: from destination back to source
+            reverseAnimations.push({
+              type: AnimationType.MOVE,
+              index: destIndex,
+              direction: reverseDirection,
+              value: anim.value,
+            });
+          }
+        }
+      }
+
+      // Set reverse animations or clear them
+      newState.animations =
+        reverseAnimations.length > 0 ? reverseAnimations : undefined;
+      newState.moveId = new Date().getTime().toString();
       break;
     case ActionType.DISMISS:
       newState.victoryDismissed = true;
