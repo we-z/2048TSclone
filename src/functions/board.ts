@@ -4,8 +4,8 @@ import { Animation, AnimationType } from "../types/Animations";
 export type BoardType = number[];
 
 export function newTileValue() {
-  // Always return 1 (triangle)
-  return 1;
+  // Randomly return either 1 or 2
+  return Math.random() < 0.5 ? 1 : 2;
 }
 
 /**

@@ -2,8 +2,13 @@ import { Direction } from "../types/Direction";
 import { initializeBoard, newTileValue, updateBoard } from "./board";
 
 describe("board", () => {
-  it("new tile value always returns 1 (triangle)", () => {
-    expect(newTileValue()).toBe(1);
+  it("new tile value returns either 1 or 2", () => {
+    const value = newTileValue();
+    expect(value === 1 || value === 2).toBe(true);
+    // Verify randomness by checking multiple calls
+    const values = Array.from({ length: 100 }, () => newTileValue());
+    expect(values.some((v) => v === 1)).toBe(true);
+    expect(values.some((v) => v === 2)).toBe(true);
   });
 
   it("initializes board with two non-zero tiles", () => {
