@@ -13,6 +13,7 @@ const Header: React.FC = () => {
   const moveId = useSelector((state: StateType) => state.moveId);
   const best = useSelector((state: StateType) => state.best);
   const previousBoard = useSelector((state: StateType) => state.previousBoard);
+  const defeat = useSelector((state: StateType) => state.defeat);
 
   return (
     <div className="header">
@@ -39,7 +40,7 @@ const Header: React.FC = () => {
           Join the numbers and get to the <strong>2048 tile!</strong>
         </div> */}
         <div className="header-buttons">
-          <button onClick={undo} disabled={!previousBoard}>
+          <button onClick={undo} disabled={defeat || !previousBoard}>
             Undo
           </button>
           <button onClick={reset}>New game</button>

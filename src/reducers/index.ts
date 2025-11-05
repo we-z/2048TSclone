@@ -107,7 +107,7 @@ function applicationState(state = initialState, action: ActionModel) {
       }
       break;
     case ActionType.UNDO:
-      if (!newState.previousBoard) {
+      if (newState.defeat || !newState.previousBoard) {
         break;
       }
 
