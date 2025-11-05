@@ -4,12 +4,8 @@ import { Animation, AnimationType } from "../types/Animations";
 export type BoardType = number[];
 
 export function newTileValue() {
-  // Return 1, 2, 3, or 4 with equal probability
-  const random = Math.random();
-  if (random < 0.25) return 1;
-  if (random < 0.5) return 2;
-  if (random < 0.75) return 3;
-  return 4;
+  // Always return 1 (triangle)
+  return 1;
 }
 
 /**

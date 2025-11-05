@@ -2,8 +2,8 @@ import { Direction } from "../types/Direction";
 import { initializeBoard, newTileValue, updateBoard } from "./board";
 
 describe("board", () => {
-  it("new tile value returns either 1, 2, or 3", () => {
-    expect([1, 2, 3]).toContain(newTileValue());
+  it("new tile value always returns 1 (triangle)", () => {
+    expect(newTileValue()).toBe(1);
   });
 
   it("initializes board with two non-zero tiles", () => {
