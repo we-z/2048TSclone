@@ -19,7 +19,9 @@ html {
   --score-bg: #bbada0;
   --overlay-bg: rgba(238, 228, 218, 0.73);
   --overlay-victory-bg: rgba(237, 194, 46, 0.5);
+  --tile-1-bg: #e8e4d8;
   --tile-2-bg: #eee4da;
+  --tile-3-bg: #ede0c8;
   --tile-4-bg: #ede0c8;
   --tile-8-bg: #f2b179;
   --tile-16-bg: #f59563;
@@ -43,7 +45,9 @@ html {
   --score-bg: #2d2d44;
   --overlay-bg: rgba(26, 26, 46, 0.85);
   --overlay-victory-bg: rgba(108, 92, 231, 0.6);
+  --tile-1-bg: #1e293b;
   --tile-2-bg: #2d3748;
+  --tile-3-bg: #374151;
   --tile-4-bg: #374151;
   --tile-8-bg: #f59e0b;
   --tile-16-bg: #f97316;
@@ -67,7 +71,9 @@ html {
   --score-bg: #2d2d44;
   --overlay-bg: rgba(26, 26, 46, 0.85);
   --overlay-victory-bg: rgba(108, 92, 231, 0.6);
+  --tile-1-bg: #1e293b;
   --tile-2-bg: #2d3748;
+  --tile-3-bg: #374151;
   --tile-4-bg: #374151;
   --tile-8-bg: #f59e0b;
   --tile-16-bg: #f97316;
@@ -302,8 +308,20 @@ button {
       animation: tile-merge var(--animation-duration) ease-in-out;
     }
 
+    &-1 {
+      background: var(--tile-1-bg);
+      color: var(--text-primary);
+      font-size: 1.7em;
+    }
+
     &-2 {
       background: var(--tile-2-bg);
+      color: var(--text-primary);
+      font-size: 1.7em;
+    }
+
+    &-3 {
+      background: var(--tile-3-bg);
       color: var(--text-primary);
       font-size: 1.7em;
     }

@@ -1,6 +1,6 @@
-import { StorageModel } from '../types/Models';
+import { StorageModel } from "../types/Models";
 
-const ITEM_NAME = '2048_data';
+const ITEM_NAME = "2048_data";
 
 export function getStoredData(): StorageModel {
   if (!localStorage.getItem(ITEM_NAME)) {
@@ -13,28 +13,28 @@ export function getStoredData(): StorageModel {
     const data = JSON.parse(localStorage.getItem(ITEM_NAME) as string);
 
     if (
-      data.hasOwnProperty('board') &&
-      data.hasOwnProperty('boardSize') &&
-      data.hasOwnProperty('score') &&
-      data.hasOwnProperty('defeat') &&
-      data.hasOwnProperty('victoryDismissed')
+      data.hasOwnProperty("board") &&
+      data.hasOwnProperty("boardSize") &&
+      data.hasOwnProperty("score") &&
+      data.hasOwnProperty("defeat") &&
+      data.hasOwnProperty("victoryDismissed")
     ) {
       if (
         Array.isArray(data.board) &&
-        typeof data.boardSize === 'number' &&
+        typeof data.boardSize === "number" &&
         data.board.length === data.boardSize ** 2 &&
-        typeof data.score === 'number' &&
-        typeof data.defeat === 'boolean' &&
-        typeof data.victoryDismissed === 'boolean'
+        typeof data.score === "number" &&
+        typeof data.defeat === "boolean" &&
+        typeof data.victoryDismissed === "boolean"
       ) {
         for (let value of data.board) {
-          if (typeof value !== 'number') {
-            throw new Error('Invalid stored data.');
+          if (typeof value !== "number") {
+            throw new Error("Invalid stored data.");
           }
 
-          // Make sure the value is a power of 2.
-          if (value !== 0 && Math.log2(value) % 1 !== 0) {
-            throw new Error('Invalid stored data.');
+          // Make sure the value is 0, 1, 2, or 3.
+          if (value !== 0 && value !== 1 && value !== 2 && value !== 3) {
+            throw new Error("Invalid stored data.");
           }
         }
 
@@ -44,15 +44,15 @@ export function getStoredData(): StorageModel {
         model.defeat = data.defeat;
         model.victoryDismissed = data.victoryDismissed;
       } else {
-        throw new Error('Invalid stored data.');
+        throw new Error("Invalid stored data.");
       }
     }
 
-    if (data.hasOwnProperty('best')) {
-      if (typeof data.best === 'number') {
+    if (data.hasOwnProperty("best")) {
+      if (typeof data.best === "number") {
         model.best = data.best;
       } else {
-        throw new Error('Invalid stored data.');
+        throw new Error("Invalid stored data.");
       }
     }
   } catch {

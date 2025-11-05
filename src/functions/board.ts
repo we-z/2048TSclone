@@ -1,14 +1,33 @@
-import { Direction } from '../types/Direction';
-import { Animation, AnimationType } from '../types/Animations';
+import { Direction } from "../types/Direction";
+import { Animation, AnimationType } from "../types/Animations";
 
 export type BoardType = number[];
 
 export function newTileValue() {
-  return Math.random() > 0.1 ? 2 : 4;
+  // Return 1, 2, or 3 with equal probability
+  const random = Math.random();
+  if (random < 0.333) return 1;
+  if (random < 0.666) return 2;
+  return 3;
+}
+
+/**
+ * Merges two tiles following the circular rule:
+ * 1 + 1 = 2
+ * 2 + 2 = 3
+ * 3 + 3 = 1
+ */
+function mergeTiles(value1: number, value2: number): number | null {
+  if (value1 === value2 && (value1 === 1 || value1 === 2 || value1 === 3)) {
+    if (value1 === 1) return 2;
+    if (value1 === 2) return 3;
+    if (value1 === 3) return 1;
+  }
+  return null;
 }
 
 function containsEmpty(board: BoardType): boolean {
-  return board.find(value => value === 0) === 0;
+  return board.find((value) => value === 0) === 0;
 }
 
 interface NewTileResult {
@@ -186,7 +205,10 @@ export function updateBoard(
       let merged = false;
       let finalIndex: number | undefined = undefined;
 
-      while (board[below] === 0 || (!merged && board[i] === board[below])) {
+      while (
+        board[below] === 0 ||
+        (!merged && board[i] === board[below] && board[i] >= 1 && board[i] <= 3)
+      ) {
         if (below === lastMergedIndex) {
           break;
         }
@@ -197,15 +219,22 @@ export function updateBoard(
           // Ensure non-greedy behavior, only allow first merge after fall.
           merged = true;
 
-          scoreIncrease += board[i] * 2;
+          const mergedValue = mergeTiles(board[i], board[below]);
+          if (mergedValue !== null) {
+            board[below] = mergedValue;
+            scoreIncrease += mergedValue;
+          }
+          board[i] = 0;
+          finalIndex = below;
+          break; // Stop after merge
+        } else {
+          // Move tile down
+          board[below] = board[i];
+          board[i] = 0;
+          i = below;
+          finalIndex = below;
+          below = i + boardSize;
         }
-
-        // Merge or update tile.
-        board[below] += board[i];
-        board[i] = 0;
-        i = below;
-        finalIndex = below;
-        below = i + boardSize;
       }
 
       if (finalIndex !== undefined) {

@@ -1,17 +1,17 @@
-import { Store } from 'redux';
+import { Store } from "redux";
 
-import { ActionType } from '../types/ActionType';
-import { ActionModel } from '../types/Models';
+import { ActionType } from "../types/ActionType";
+import { ActionModel } from "../types/Models";
 import {
   initializeBoard,
   BoardType,
   updateBoard,
   movePossible,
-} from '../functions/board';
-import { Direction } from '../types/Direction';
-import { getStoredData, setStoredData } from '../functions/localStorage';
-import { Animation } from '../types/Animations';
-import { defaultBoardSize, victoryTileValue } from '../config';
+} from "../functions/board";
+import { Direction } from "../types/Direction";
+import { getStoredData, setStoredData } from "../functions/localStorage";
+import { Animation } from "../types/Animations";
+import { defaultBoardSize, victoryTileValue } from "../config";
 
 export interface StateType {
   /** Board size. Currently always 4. */
@@ -126,7 +126,9 @@ function applicationState(state = initialState, action: ActionModel) {
   }
 
   newState.defeat = !movePossible(newState.board);
-  newState.victory = !!newState.board.find(value => value === victoryTileValue);
+  newState.victory =
+    victoryTileValue > 0 &&
+    !!newState.board.find((value) => value === victoryTileValue);
   setStoredData(newState);
 
   return newState;
