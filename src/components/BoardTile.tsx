@@ -74,14 +74,22 @@ const BoardTile: React.FC<BoardTileProps> = ({ value, animations }) => {
     return value;
   }, [moveAnimation]);
 
+  const displayNumber = useMemo(() => {
+    return value !== 0 ? ((value - 1) % 8) + 1 : 0;
+  }, [value]);
+
   return (
     <div className="board-tile">
       {value !== 0 && (
         <div
-          className={clsx("board-tile-value", "board-tile-" + value, {
-            "board-tile-new": !!newAnimation,
-            "board-tile-merge": !!mergeAnimation,
-          })}
+          className={clsx(
+            "board-tile-value",
+            "board-tile-display-" + displayNumber,
+            {
+              "board-tile-new": !!newAnimation,
+              "board-tile-merge": !!mergeAnimation,
+            }
+          )}
           style={style}
         >
           {renderTileContent(value)}

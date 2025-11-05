@@ -16,7 +16,7 @@ export function newTileValue() {
 function mergeTiles(value1: number, value2: number): number | null {
   if (value1 === value2 && value1 >= 1 && value1 <= 8) {
     // Increment by 1, wrapping around from 8 to 1
-    return ((value1 - 1 + 1) % 8) + 1;
+    return (value1 % 8) + 1;
   }
   return null;
 }
