@@ -86,6 +86,18 @@ const Board: React.FC = () => {
   );
 
   const onTouchStart = useCallback((e: React.TouchEvent) => {
+    const target = e.target as HTMLElement;
+    // Allow buttons and other interactive elements to handle their own touch events
+    if (
+      target.tagName === "BUTTON" ||
+      target.closest("button") ||
+      target.closest("a") ||
+      target.isContentEditable
+    ) {
+      startPointerLocation.current = undefined; // Clear any previous tracking
+      e.stopPropagation(); // Prevent event from being handled by swipe logic
+      return;
+    }
     e.preventDefault();
     const touch = e.touches[0];
     if (touch) {
@@ -94,6 +106,17 @@ const Board: React.FC = () => {
     }
   }, []);
   const onTouchMove = useCallback((e: React.TouchEvent) => {
+    const target = e.target as HTMLElement;
+    // Allow buttons and other interactive elements to handle their own touch events
+    if (
+      target.tagName === "BUTTON" ||
+      target.closest("button") ||
+      target.closest("a") ||
+      target.isContentEditable
+    ) {
+      e.stopPropagation(); // Prevent event from being handled by swipe logic
+      return;
+    }
     e.preventDefault();
     const touch = e.touches[0];
     if (touch) {
@@ -103,13 +126,44 @@ const Board: React.FC = () => {
   }, []);
   const onTouchEnd = useCallback(
     (e: React.TouchEvent) => {
-      e.preventDefault();
-      if (startPointerLocation.current && currentPointerLocation.current) {
-        finishPointer(
-          startPointerLocation.current,
-          currentPointerLocation.current
-        );
+      // Only process swipe if we have a starting point
+      if (!startPointerLocation.current || !currentPointerLocation.current) {
+        e.stopPropagation(); // Prevent swipe handling if no starting point
+        return;
       }
+
+      const touch = e.changedTouches[0];
+      if (!touch) {
+        startPointerLocation.current = undefined;
+        currentPointerLocation.current = undefined;
+        return;
+      }
+
+      // Check if the touch ended on an interactive element
+      const endElement = document.elementFromPoint(
+        touch.clientX,
+        touch.clientY
+      ) as HTMLElement;
+      if (
+        endElement &&
+        (endElement.tagName === "BUTTON" ||
+          endElement.closest("button") ||
+          endElement.closest("a") ||
+          endElement.isContentEditable)
+      ) {
+        // If touch ended on a button, allow it to handle the click
+        startPointerLocation.current = undefined;
+        currentPointerLocation.current = undefined;
+        e.stopPropagation(); // Prevent swipe handling
+        return;
+      }
+
+      // Otherwise, process as a swipe
+      e.preventDefault();
+      finishPointer(
+        startPointerLocation.current,
+        currentPointerLocation.current
+      );
 
       startPointerLocation.current = undefined;
       currentPointerLocation.current = undefined;
