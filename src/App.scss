@@ -331,20 +331,20 @@ button {
     }
 
     &-1 {
-      background: var(--tile-1-bg);
-      color: var(--text-primary);
+      background: #ef4444; /* Beautiful red */
+      color: white;
       font-size: 1.7em;
     }
 
     &-2 {
-      background: var(--tile-2-bg);
-      color: var(--text-primary);
+      background: #10b981; /* Beautiful green */
+      color: white;
       font-size: 1.7em;
     }
 
     &-3 {
-      background: var(--tile-3-bg);
-      color: var(--text-primary);
+      background: #3b82f6; /* Beautiful blue */
+      color: white;
       font-size: 1.7em;
     }
 
