@@ -65,6 +65,23 @@ function renderTileContent(value: number): React.ReactNode {
           />
         </svg>
       );
+    case 4:
+      return (
+        <svg
+          className="tile-shape tile-shape-hexagon"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <path
+            d="M 50,10 L 84.64,30 L 84.64,70 L 50,90 L 15.36,70 L 15.36,30 Z"
+            fill="currentColor"
+            stroke="currentColor"
+            strokeWidth="9"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+          />
+        </svg>
+      );
     default:
       return value;
   }

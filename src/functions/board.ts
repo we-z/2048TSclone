@@ -4,24 +4,30 @@ import { Animation, AnimationType } from "../types/Animations";
 export type BoardType = number[];
 
 export function newTileValue() {
-  // Return 1, 2, or 3 with equal probability
+  // Return 1, 2, 3, or 4 with equal probability
   const random = Math.random();
-  if (random < 0.333) return 1;
-  if (random < 0.666) return 2;
-  return 3;
+  if (random < 0.25) return 1;
+  if (random < 0.5) return 2;
+  if (random < 0.75) return 3;
+  return 4;
 }
 
 /**
  * Merges two tiles following the circular rule:
- * 1 + 1 = 2
- * 2 + 2 = 3
- * 3 + 3 = 1
+ * 1 + 1 = 2 (triangle -> square)
+ * 2 + 2 = 3 (square -> pentagon)
+ * 3 + 3 = 4 (pentagon -> hexagon)
+ * 4 + 4 = 1 (hexagon -> back to triangle)
  */
 function mergeTiles(value1: number, value2: number): number | null {
-  if (value1 === value2 && (value1 === 1 || value1 === 2 || value1 === 3)) {
+  if (
+    value1 === value2 &&
+    (value1 === 1 || value1 === 2 || value1 === 3 || value1 === 4)
+  ) {
     if (value1 === 1) return 2;
     if (value1 === 2) return 3;
-    if (value1 === 3) return 1;
+    if (value1 === 3) return 4;
+    if (value1 === 4) return 1;
   }
   return null;
 }
@@ -207,7 +213,7 @@ export function updateBoard(
 
       while (
         board[below] === 0 ||
-        (!merged && board[i] === board[below] && board[i] >= 1 && board[i] <= 3)
+        (!merged && board[i] === board[below] && board[i] >= 1 && board[i] <= 4)
       ) {
         if (below === lastMergedIndex) {
           break;

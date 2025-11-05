@@ -336,14 +336,21 @@ button {
       }
 
       &-square {
-        font-size: 1.1em;
+        font-size: 1.4em;
       }
 
       &-pentagon {
-        width: 1em;
-        height: 1em;
+        width: 1.4em;
+        height: 1.4em;
         flex-shrink: 0;
         /* Regular pentagon with rounded corners via stroke-linejoin */
+      }
+
+      &-hexagon {
+        width: 1.4em;
+        height: 1.4em;
+        flex-shrink: 0;
+        /* Regular hexagon with rounded corners via stroke-linejoin */
       }
     }
 
@@ -374,8 +381,8 @@ button {
     }
 
     &-4 {
-      background: var(--tile-4-bg);
-      color: var(--text-primary);
+      background: #fbbf24; /* Beautiful yellow */
+      color: white;
       font-size: 1.7em;
     }
 
