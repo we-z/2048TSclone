@@ -300,6 +300,28 @@ button {
       transition: background 0.3s ease, color 0.3s ease;
     }
 
+    .tile-shape {
+      display: inline-block;
+      font-size: 1.2em;
+      line-height: 1;
+      color: currentColor;
+
+      &-triangle {
+        width: 1em;
+        height: 1em;
+        flex-shrink: 0;
+        /* Larger equilateral triangle with rounded corners via stroke-linejoin */
+      }
+
+      &-square {
+        font-size: 1.1em;
+      }
+
+      &-circle {
+        font-size: 1.2em;
+      }
+    }
+
     &-new {
       animation: tile-new var(--animation-duration) ease-in-out;
     }

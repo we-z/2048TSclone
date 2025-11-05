@@ -1,5 +1,5 @@
-import React, { CSSProperties, useMemo } from 'react';
-import clsx from 'clsx';
+import React, { CSSProperties, useMemo } from "react";
+import clsx from "clsx";
 
 import {
   Animation,
@@ -7,16 +7,16 @@ import {
   AnimationMove,
   AnimationNew,
   AnimationType,
-} from '../types/Animations';
-import { Direction } from '../types/Direction';
-import { animationDuration, gridGap } from '../config';
+} from "../types/Animations";
+import { Direction } from "../types/Direction";
+import { animationDuration, gridGap } from "../config";
 
 export interface BoardTileProps {
   value: number;
   animations?: Animation[];
 }
 
-function tileTranslate(axis: 'X' | 'Y', value: number) {
+function tileTranslate(axis: "X" | "Y", value: number) {
   return `translate${axis}(calc(${value} * (${gridGap} + 100%))`;
 }
 
@@ -24,7 +24,35 @@ function findAnimation<T extends Animation>(
   animations: Animation[] | undefined,
   type: AnimationType
 ): T {
-  return animations?.find(animation => animation.type === type) as T;
+  return animations?.find((animation) => animation.type === type) as T;
+}
+
+function renderTileContent(value: number): React.ReactNode {
+  switch (value) {
+    case 1:
+      return (
+        <svg
+          className="tile-shape tile-shape-triangle"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <path
+            d="M 50,15.3 L 8,88 L 92,88 Z"
+            fill="currentColor"
+            stroke="currentColor"
+            strokeWidth="9"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+          />
+        </svg>
+      );
+    case 2:
+      return <span className="tile-shape tile-shape-square">■</span>;
+    case 3:
+      return <span className="tile-shape tile-shape-circle">●</span>;
+    default:
+      return value;
+  }
 }
 
 const BoardTile: React.FC<BoardTileProps> = ({ value, animations }) => {
@@ -47,21 +75,21 @@ const BoardTile: React.FC<BoardTileProps> = ({ value, animations }) => {
     }
 
     const value: CSSProperties = {
-      transition: animationDuration + 'ms ease-in-out all',
+      transition: animationDuration + "ms ease-in-out all",
     };
 
     switch (moveAnimation.direction) {
       case Direction.UP:
-        value.transform = tileTranslate('Y', -1 * moveAnimation.value);
+        value.transform = tileTranslate("Y", -1 * moveAnimation.value);
         break;
       case Direction.DOWN:
-        value.transform = tileTranslate('Y', moveAnimation.value);
+        value.transform = tileTranslate("Y", moveAnimation.value);
         break;
       case Direction.LEFT:
-        value.transform = tileTranslate('X', -1 * moveAnimation.value);
+        value.transform = tileTranslate("X", -1 * moveAnimation.value);
         break;
       case Direction.RIGHT:
-        value.transform = tileTranslate('X', moveAnimation.value);
+        value.transform = tileTranslate("X", moveAnimation.value);
         break;
     }
 
@@ -72,13 +100,13 @@ const BoardTile: React.FC<BoardTileProps> = ({ value, animations }) => {
     <div className="board-tile">
       {value !== 0 && (
         <div
-          className={clsx('board-tile-value', 'board-tile-' + value, {
-            'board-tile-new': !!newAnimation,
-            'board-tile-merge': !!mergeAnimation,
+          className={clsx("board-tile-value", "board-tile-" + value, {
+            "board-tile-new": !!newAnimation,
+            "board-tile-merge": !!mergeAnimation,
           })}
           style={style}
         >
-          {value}
+          {renderTileContent(value)}
         </div>
       )}
     </div>
