@@ -53,7 +53,7 @@ const BoardTile: React.FC<BoardTileProps> = ({ value, animations }) => {
     }
 
     const value: CSSProperties = {
-      transition: animationDuration + "ms ease-in-out all",
+      transition: animationDuration + "ms ease-in-out transform",
     };
 
     switch (moveAnimation.direction) {
