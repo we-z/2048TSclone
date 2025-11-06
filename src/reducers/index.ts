@@ -124,6 +124,7 @@ function applicationState(state = initialState, action: ActionModel) {
 
       if (newState.scoreIncrease) {
         newState.score -= newState.scoreIncrease;
+        newState.scoreIncrease = undefined;
       }
 
       // Generate reverse animations by reversing the stored forward animations
@@ -188,6 +189,7 @@ function applicationState(state = initialState, action: ActionModel) {
       // Set reverse animations or clear them
       newState.animations =
         reverseAnimations.length > 0 ? reverseAnimations : undefined;
+      newState.previousDirection = undefined;
       newState.moveId = new Date().getTime().toString();
       break;
     case ActionType.DISMISS:

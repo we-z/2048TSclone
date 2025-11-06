@@ -62,6 +62,12 @@ const Board: React.FC = () => {
   }, [onMove]);
 
   useEffect(() => {
+    // Store the previous board state before processing animations
+    const previousBoard = [...lastBoard.current];
+
+    // Update lastBoard.current to the current board state
+    lastBoard.current = [...board];
+
     if (!animations) {
       setRenderedBoard([...board]);
       return;
@@ -75,7 +81,7 @@ const Board: React.FC = () => {
     );
 
     if (moveAnimations.length > 0) {
-      setRenderedBoard(lastBoard.current);
+      setRenderedBoard(previousBoard);
       setRenderedAnimations(moveAnimations);
 
       clearTimeout(animationTimeout.current);
@@ -87,8 +93,6 @@ const Board: React.FC = () => {
       setRenderedAnimations(otherAnimations);
       setRenderedBoard([...board]);
     }
-
-    lastBoard.current = [...board];
   }, [animations, board, setRenderedBoard, setRenderedAnimations]);
 
   return (
