@@ -55,6 +55,7 @@ export interface BoardUpdate {
   board: BoardType;
   animations?: Animation[];
   scoreIncrease: number;
+  changed: boolean;
 }
 
 export function initializeBoard(boardSize: number): BoardUpdate {
@@ -78,7 +79,7 @@ export function initializeBoard(boardSize: number): BoardUpdate {
     });
   }
 
-  return { board, scoreIncrease: 0, animations };
+  return { board, scoreIncrease: 0, animations, changed: true };
 }
 
 function getRotatedIndex(
@@ -269,7 +270,7 @@ export function updateBoard(
     }
   }
 
-  return { board, scoreIncrease, animations };
+  return { board, scoreIncrease, animations, changed };
 }
 
 export function movePossible(board: BoardType): boolean {

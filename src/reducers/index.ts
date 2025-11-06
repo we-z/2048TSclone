@@ -97,13 +97,17 @@ function applicationState(state = initialState, action: ActionModel) {
 
         const direction = action.value as Direction;
         const update = updateBoard(newState.board, direction);
-        newState.previousBoard = [...newState.board];
-        newState.previousDirection = direction;
-        newState.board = update.board;
-        newState.score += update.scoreIncrease;
-        newState.animations = update.animations;
-        newState.scoreIncrease = update.scoreIncrease;
-        newState.moveId = new Date().getTime().toString();
+
+        // Only save previous state if the move actually changed the board
+        if (update.changed) {
+          newState.previousBoard = [...newState.board];
+          newState.previousDirection = direction;
+          newState.board = update.board;
+          newState.score += update.scoreIncrease;
+          newState.animations = update.animations;
+          newState.scoreIncrease = update.scoreIncrease;
+          newState.moveId = new Date().getTime().toString();
+        }
       }
       break;
     case ActionType.UNDO:
