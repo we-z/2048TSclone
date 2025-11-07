@@ -127,11 +127,12 @@ function applicationState(state = initialState, action: ActionModel) {
       // Generate reverse animations by reversing the stored forward animations
       // The stored animations show tiles moving from previousBoard to current board
       // We need to reverse them to show tiles moving back
+      // IMPORTANT: Do NOT include MERGE or NEW animations during undo
       const reverseAnimations: Animation[] = [];
       if (newState.previousDirection && storedAnimations) {
         const boardSize = Math.sqrt(currentBoardBeforeUndo.length);
 
-        // For each move animation, reverse it
+        // Only reverse MOVE animations - exclude MERGE and NEW animations
         for (const anim of storedAnimations) {
           if (anim.type === AnimationType.MOVE) {
             // anim.index is where the tile started (in previousBoard)
@@ -181,17 +182,10 @@ function applicationState(state = initialState, action: ActionModel) {
               direction: reverseDirection,
               value: anim.value,
             });
-          } else if (anim.type === AnimationType.NEW) {
-            // For NEW animations, we need to animate the tile disappearing
-            // We'll handle this by creating a reverse animation that moves it out
-            // Actually, NEW tiles should just disappear, so we might not need animation
-            // But let's keep it simple and just not animate NEW tiles
-          } else if (anim.type === AnimationType.MERGE) {
-            // For MERGE animations, we need to reverse the merge
-            // This is complex - we'd need to split the merged tile back
-            // For now, let's just not animate merges on undo
-            // The tile will just appear at its original position
           }
+          // Explicitly skip NEW and MERGE animations during undo
+          // NEW: tiles that were added should just disappear
+          // MERGE: merged tiles should just split back without animation
         }
       }
 
