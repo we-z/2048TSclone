@@ -11,6 +11,8 @@ import Board from "./components/Board";
 import Info from "./components/Info";
 // import BoardSizePicker from "./components/BoardSizePicker";
 import ThemeToggle from "./components/ThemeToggle";
+import InfoButton from "./components/InfoButton";
+import InfoModal from "./components/InfoModal";
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -18,6 +20,7 @@ const App: React.FC = () => {
     const savedTheme = localStorage.getItem("theme");
     return savedTheme ? savedTheme === "dark" : true; // default to dark mode
   });
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
   const startPointerLocation = useRef<Point>();
 
   useEffect(() => {
@@ -25,6 +28,22 @@ const App: React.FC = () => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [isDark]);
+
+  // Keyboard shortcut for info modal
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === "i" || e.key === "I") {
+        setIsInfoOpen((prev) => !prev);
+      } else if (e.key === "Escape" && isInfoOpen) {
+        setIsInfoOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyPress);
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [isInfoOpen]);
 
   // Prevent scrolling globally by preventing touchmove default behavior
   // But allow buttons and other interactive elements to work
@@ -53,6 +72,10 @@ const App: React.FC = () => {
 
   const toggleTheme = () => {
     setIsDark(!isDark);
+  };
+
+  const toggleInfo = () => {
+    setIsInfoOpen(!isInfoOpen);
   };
 
   const onMove = useCallback(
@@ -211,7 +234,9 @@ const App: React.FC = () => {
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
     >
+      <InfoButton onClick={toggleInfo} />
       <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
+      <InfoModal isOpen={isInfoOpen} onClose={() => setIsInfoOpen(false)} />
       <div className="page">
         <Header />
         <Board />
