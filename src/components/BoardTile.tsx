@@ -1,4 +1,4 @@
-import React, { CSSProperties, useMemo } from "react";
+import React, { CSSProperties, useMemo, useState, useEffect } from "react";
 import clsx from "clsx";
 
 import {
@@ -10,6 +10,7 @@ import {
 } from "../types/Animations";
 import { Direction } from "../types/Direction";
 import { animationDuration, gridGap } from "../config";
+import ParticleEffect from "./ParticleEffect";
 
 export interface BoardTileProps {
   value: number;
@@ -34,6 +35,9 @@ function renderTileContent(value: number): React.ReactNode {
 }
 
 const BoardTile: React.FC<BoardTileProps> = ({ value, animations }) => {
+  const [showParticles, setShowParticles] = useState(false);
+  const [particleTileValue, setParticleTileValue] = useState(0);
+
   const moveAnimation = useMemo(
     () => findAnimation<AnimationMove>(animations, AnimationType.MOVE),
     [animations]
@@ -46,6 +50,19 @@ const BoardTile: React.FC<BoardTileProps> = ({ value, animations }) => {
     () => findAnimation<AnimationMerge>(animations, AnimationType.MERGE),
     [animations]
   );
+
+  // Trigger particles AFTER merge animation completes - only for significant merges (value >= 5)
+  useEffect(() => {
+    if (mergeAnimation && mergeAnimation.value && mergeAnimation.value >= 5) {
+      // Wait for the merge animation to complete before showing particles
+      const timer = setTimeout(() => {
+        setParticleTileValue(mergeAnimation.value || 0);
+        setShowParticles(true);
+      }, animationDuration);
+
+      return () => clearTimeout(timer);
+    }
+  }, [mergeAnimation]);
 
   const style = useMemo(() => {
     if (!moveAnimation) {
@@ -88,11 +105,26 @@ const BoardTile: React.FC<BoardTileProps> = ({ value, animations }) => {
             {
               "board-tile-new": !!newAnimation,
               "board-tile-merge": !!mergeAnimation,
+              // Progressive merge effects based on tile value
+              [`board-tile-merge-level-${value}`]: !!mergeAnimation && value,
             }
           )}
           style={style}
         >
-          {renderTileContent(value)}
+          <span
+            className={clsx("tile-number", {
+              "tile-number-merge": !!mergeAnimation,
+              [`tile-number-merge-level-${value}`]: !!mergeAnimation && value,
+            })}
+          >
+            {renderTileContent(value)}
+          </span>
+          {showParticles && (
+            <ParticleEffect
+              tileValue={particleTileValue}
+              onComplete={() => setShowParticles(false)}
+            />
+          )}
         </div>
       )}
     </div>

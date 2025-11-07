@@ -301,6 +301,9 @@ button {
     line-height: 0;
     font-size: 1.6rem;
     transition: background 0.3s ease;
+    // Prevent any layout shifts
+    min-height: 0;
+    max-height: none;
 
     &-value {
       background: #3c3a32;
@@ -319,6 +322,18 @@ button {
       line-height: 1;
       border-radius: 9px;
       z-index: 9;
+      overflow: visible; // Allow particles to overflow
+
+      // Ensure consistent size - prevent resizing
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+
+      // GPU acceleration optimization
+      will-change: transform, filter, box-shadow;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      perspective: 1000px;
 
       // Ensure consistent text rendering for all numbers
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
@@ -368,53 +383,61 @@ button {
       animation: tile-merge var(--animation-duration) ease-in-out;
     }
 
-    // Display number styles (1-8 looping) - all with consistent size and beautiful colors
+    // Display number styles (1-8 looping) - clean gradients, no glow when stationary
     &-display-1 {
-      background: #ef4444; /* Beautiful red */
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
       color: white;
       font-size: 1.7em;
+      border: 2px solid rgba(239, 68, 68, 0.4);
     }
 
     &-display-2 {
-      background: #10b981; /* Beautiful green */
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       color: white;
       font-size: 1.7em;
+      border: 2px solid rgba(16, 185, 129, 0.4);
     }
 
     &-display-3 {
-      background: #3b82f6; /* Beautiful blue */
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
       color: white;
       font-size: 1.7em;
+      border: 2px solid rgba(59, 130, 246, 0.4);
     }
 
     &-display-4 {
-      background: #fbbf24; /* Beautiful yellow/amber */
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
       color: white;
       font-size: 1.7em;
+      border: 2px solid rgba(251, 191, 36, 0.4);
     }
 
     &-display-5 {
-      background: #8b5cf6; /* Beautiful purple */
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
       color: white;
       font-size: 1.7em;
+      border: 2px solid rgba(139, 92, 246, 0.4);
     }
 
     &-display-6 {
-      background: #ec4899; /* Beautiful pink */
+      background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
       color: white;
       font-size: 1.7em;
+      border: 2px solid rgba(236, 72, 153, 0.4);
     }
 
     &-display-7 {
-      background: #06b6d4; /* Beautiful cyan */
+      background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
       color: white;
       font-size: 1.7em;
+      border: 2px solid rgba(6, 182, 212, 0.4);
     }
 
     &-display-8 {
-      background: #f59e0b; /* Beautiful orange */
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
       color: white;
       font-size: 1.7em;
+      border: 2px solid rgba(245, 158, 11, 0.4);
     }
 
     // Legacy support for old value-based classes (fallback)
@@ -543,6 +566,470 @@ button {
 
   100% {
     transform: scale(1);
+  }
+}
+
+// Number animations - the actual digit inside the tile
+.tile-number {
+  display: inline-block;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  position: relative;
+  z-index: 10; // Ensure numbers always stay on top
+}
+
+// Base merge animation for numbers
+.tile-number-merge {
+  animation: number-merge-base var(--animation-duration) ease-in-out;
+}
+
+// Progressive number animations - faster for better performance
+.tile-number-merge-level-1 {
+  animation: number-pop-1 0.4s ease-in-out !important;
+}
+
+.tile-number-merge-level-2 {
+  animation: number-grow-2 0.4s ease-in-out !important;
+}
+
+.tile-number-merge-level-3 {
+  animation: number-pulse-3 0.45s ease-in-out !important;
+}
+
+.tile-number-merge-level-4 {
+  animation: number-spin-4 0.45s ease-in-out !important;
+}
+
+.tile-number-merge-level-5 {
+  animation: number-wobble-5 0.5s ease-in-out !important;
+}
+
+.tile-number-merge-level-6 {
+  animation: number-bounce-6 0.5s ease-in-out !important;
+}
+
+.tile-number-merge-level-7 {
+  animation: number-explode-7 0.55s ease-in-out !important;
+}
+
+.tile-number-merge-level-8 {
+  animation: number-ultimate-8 0.6s ease-in-out !important;
+}
+
+// Particle effects
+.particle-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: -1; // Behind the tile content so numbers remain clearly visible
+}
+
+.particle {
+  position: absolute;
+  font-size: 1em;
+  animation: particle-burst 0.6s ease-out forwards;
+  transform-origin: center;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+@keyframes particle-burst {
+  0% {
+    opacity: 0.8;
+    transform: translate(0, 0) rotate(0deg) scale(0.3) translateZ(0);
+  }
+
+  30% {
+    opacity: 1;
+    transform: translate(
+        calc(cos(var(--particle-angle)) * var(--particle-distance) * 0.5),
+        calc(sin(var(--particle-angle)) * var(--particle-distance) * 0.5)
+      )
+      rotate(calc(var(--particle-rotation) * 0.3)) scale(1) translateZ(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(
+        calc(cos(var(--particle-angle)) * var(--particle-distance) * 1.3),
+        calc(sin(var(--particle-angle)) * var(--particle-distance) * 1.3)
+      )
+      rotate(var(--particle-rotation)) scale(0.2) translateZ(0);
+  }
+}
+
+// Optimized number animation keyframes - simpler and faster
+@keyframes number-merge-base {
+  0%,
+  100% {
+    transform: translateZ(0) scale(1);
+  }
+  50% {
+    transform: translateZ(0) scale(1.1);
+  }
+}
+
+@keyframes number-pop-1 {
+  0% {
+    transform: translateZ(0) scale(0.7);
+  }
+  50% {
+    transform: translateZ(0) scale(1.15);
+  }
+  100% {
+    transform: translateZ(0) scale(1);
+  }
+}
+
+@keyframes number-grow-2 {
+  0% {
+    transform: translateZ(0) scale(0.7);
+  }
+  50% {
+    transform: translateZ(0) scale(1.2);
+  }
+  100% {
+    transform: translateZ(0) scale(1);
+  }
+}
+
+@keyframes number-pulse-3 {
+  0%,
+  100% {
+    transform: translateZ(0) scale(1);
+  }
+  30% {
+    transform: translateZ(0) scale(1.25);
+  }
+  60% {
+    transform: translateZ(0) scale(1.15);
+  }
+}
+
+@keyframes number-spin-4 {
+  0% {
+    transform: translateZ(0) scale(0.7) rotateZ(-10deg);
+  }
+  50% {
+    transform: translateZ(0) scale(1.25) rotateZ(5deg);
+  }
+  100% {
+    transform: translateZ(0) scale(1) rotateZ(0deg);
+  }
+}
+
+@keyframes number-wobble-5 {
+  0%,
+  100% {
+    transform: translateZ(0) scale(1) rotateZ(0deg);
+  }
+  25% {
+    transform: translateZ(0) scale(1.3) rotateZ(8deg);
+  }
+  50% {
+    transform: translateZ(0) scale(1.2) rotateZ(-8deg);
+  }
+  75% {
+    transform: translateZ(0) scale(1.25) rotateZ(4deg);
+  }
+}
+
+@keyframes number-bounce-6 {
+  0%,
+  100% {
+    transform: translateZ(0) scale(1) translateY(0);
+  }
+  25% {
+    transform: translateZ(0) scale(1.35) translateY(-6px);
+  }
+  50% {
+    transform: translateZ(0) scale(1.2) translateY(0);
+  }
+  75% {
+    transform: translateZ(0) scale(1.25) translateY(-3px);
+  }
+}
+
+@keyframes number-explode-7 {
+  0% {
+    transform: translateZ(0) scale(0.6) rotateZ(-15deg);
+  }
+  40% {
+    transform: translateZ(0) scale(1.4) rotateZ(10deg);
+  }
+  70% {
+    transform: translateZ(0) scale(1.15) rotateZ(-5deg);
+  }
+  100% {
+    transform: translateZ(0) scale(1) rotateZ(0deg);
+  }
+}
+
+@keyframes number-ultimate-8 {
+  0% {
+    transform: translateZ(0) scale(0.5) rotateZ(-20deg);
+  }
+  30% {
+    transform: translateZ(0) scale(1.5) rotateZ(15deg);
+  }
+  60% {
+    transform: translateZ(0) scale(1.2) rotateZ(-10deg);
+  }
+  100% {
+    transform: translateZ(0) scale(1) rotateZ(0deg);
+  }
+}
+
+// Progressive merge effects - optimized for performance
+// Level 1 - Basic pulse
+.board-tile-merge-level-1 {
+  animation: tile-merge var(--animation-duration) ease-in-out,
+    pulse-1 0.4s ease-in-out !important;
+}
+
+// Level 2 - Pulse + slight glow
+.board-tile-merge-level-2 {
+  animation: tile-merge var(--animation-duration) ease-in-out,
+    pulse-glow-2 0.4s ease-in-out !important;
+}
+
+// Level 3 - More pronounced glow and scale
+.board-tile-merge-level-3 {
+  animation: tile-merge var(--animation-duration) ease-in-out,
+    pulse-glow-3 0.45s ease-in-out !important;
+}
+
+// Level 4 - Add rotation effect
+.board-tile-merge-level-4 {
+  animation: tile-merge var(--animation-duration) ease-in-out,
+    spin-glow-4 0.45s ease-in-out !important;
+}
+
+// Level 5 - Intense glow with shake
+.board-tile-merge-level-5 {
+  animation: tile-merge var(--animation-duration) ease-in-out,
+    shake-glow-5 0.5s ease-in-out !important;
+}
+
+// Level 6 - Rainbow effect with bounce
+.board-tile-merge-level-6 {
+  animation: tile-merge var(--animation-duration) ease-in-out,
+    rainbow-bounce-6 0.5s ease-in-out !important;
+}
+
+// Level 7 - Explosive effect
+.board-tile-merge-level-7 {
+  animation: tile-merge var(--animation-duration) ease-in-out,
+    explosive-7 0.55s ease-in-out !important;
+}
+
+// Level 8 - Maximum spectacle
+.board-tile-merge-level-8 {
+  animation: tile-merge var(--animation-duration) ease-in-out,
+    ultimate-8 0.6s ease-in-out !important;
+}
+
+// Dramatic expanding neon borders with bold sparkles
+// Thin borders that extend far outward for energetic, satisfying impact
+
+// Level 1 - Red tile (#ef4444)
+@keyframes pulse-1 {
+  0%,
+  100% {
+    transform: translateZ(0);
+    border-width: 2px;
+    box-shadow: none;
+  }
+  50% {
+    transform: translateZ(0);
+    border-width: 2.5px;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.6),
+      0 0 16px 4px rgba(239, 68, 68, 0.5), 0 0 32px 8px rgba(239, 68, 68, 0.3);
+  }
+}
+
+// Level 2 - Green tile (#10b981)
+@keyframes pulse-glow-2 {
+  0%,
+  100% {
+    transform: translateZ(0);
+    border-width: 2px;
+    box-shadow: none;
+  }
+  50% {
+    transform: translateZ(0);
+    border-width: 2.5px;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.7),
+      0 0 18px 6px rgba(16, 185, 129, 0.55),
+      0 0 36px 10px rgba(16, 185, 129, 0.35);
+  }
+}
+
+// Level 3 - Blue tile (#3b82f6)
+@keyframes pulse-glow-3 {
+  0%,
+  100% {
+    transform: translateZ(0);
+    border-width: 2px;
+    box-shadow: none;
+  }
+  50% {
+    transform: translateZ(0);
+    border-width: 3px;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.7),
+      0 0 20px 8px rgba(59, 130, 246, 0.6),
+      0 0 40px 12px rgba(59, 130, 246, 0.4),
+      0 0 56px 16px rgba(59, 130, 246, 0.25);
+  }
+}
+
+// Level 4 - Yellow/Amber tile (#fbbf24)
+@keyframes spin-glow-4 {
+  0%,
+  100% {
+    transform: translateZ(0);
+    border-width: 2px;
+    box-shadow: none;
+  }
+  50% {
+    transform: translateZ(0);
+    border-width: 3px;
+    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.75),
+      0 0 24px 10px rgba(251, 191, 36, 0.65),
+      0 0 44px 14px rgba(251, 191, 36, 0.45),
+      0 0 64px 18px rgba(251, 191, 36, 0.3);
+  }
+}
+
+// Level 5 - Purple tile (#8b5cf6)
+@keyframes shake-glow-5 {
+  0%,
+  100% {
+    transform: translateZ(0) scale(1) translateX(0);
+    border-width: 2px;
+    box-shadow: none;
+  }
+  25% {
+    transform: translateZ(0) scale(1.05) translateX(-2px);
+    border-width: 3px;
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.8),
+      0 0 28px 12px rgba(139, 92, 246, 0.7),
+      0 0 48px 16px rgba(139, 92, 246, 0.5),
+      0 0 68px 20px rgba(139, 92, 246, 0.35);
+  }
+  50% {
+    transform: translateZ(0) scale(1.05) translateX(2px);
+    border-width: 3px;
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.8),
+      0 0 28px 12px rgba(139, 92, 246, 0.7),
+      0 0 48px 16px rgba(139, 92, 246, 0.5),
+      0 0 68px 20px rgba(139, 92, 246, 0.35);
+  }
+  75% {
+    transform: translateZ(0) scale(1.05) translateX(-1px);
+    border-width: 2.5px;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.6),
+      0 0 20px 8px rgba(139, 92, 246, 0.5),
+      0 0 36px 12px rgba(139, 92, 246, 0.35);
+  }
+}
+
+// Level 6 - Pink tile (#ec4899)
+@keyframes rainbow-bounce-6 {
+  0%,
+  100% {
+    transform: translateZ(0) scale(1) translateY(0);
+    filter: saturate(1);
+    border-width: 2px;
+    box-shadow: none;
+  }
+  30% {
+    transform: translateZ(0) scale(1.08) translateY(-6px);
+    filter: saturate(1.25);
+    border-width: 3.5px;
+    box-shadow: 0 0 0 5px rgba(236, 72, 153, 0.85),
+      0 0 32px 14px rgba(236, 72, 153, 0.75),
+      0 0 52px 18px rgba(236, 72, 153, 0.55),
+      0 0 72px 22px rgba(236, 72, 153, 0.4);
+  }
+  60% {
+    transform: translateZ(0) scale(1.1) translateY(0);
+    filter: saturate(1.2);
+    border-width: 3px;
+    box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.7),
+      0 0 24px 10px rgba(236, 72, 153, 0.6),
+      0 0 44px 14px rgba(236, 72, 153, 0.45);
+  }
+}
+
+// Level 7 - Cyan tile (#06b6d4)
+@keyframes explosive-7 {
+  0%,
+  100% {
+    transform: translateZ(0) scale(1) rotate(0deg);
+    border-width: 2px;
+    box-shadow: none;
+  }
+  20% {
+    transform: translateZ(0) scale(0.9) rotate(-4deg);
+    border-width: 2px;
+    box-shadow: none;
+  }
+  50% {
+    transform: translateZ(0) scale(1.12) rotate(4deg);
+    border-width: 3.5px;
+    box-shadow: 0 0 0 6px rgba(6, 182, 212, 0.9),
+      0 0 36px 16px rgba(6, 182, 212, 0.8), 0 0 56px 20px rgba(6, 182, 212, 0.6),
+      0 0 76px 24px rgba(6, 182, 212, 0.45),
+      0 0 96px 28px rgba(6, 182, 212, 0.3);
+  }
+}
+
+// Level 8 - Amber tile (#f59e0b) - Ultimate dramatic effect
+@keyframes ultimate-8 {
+  0%,
+  100% {
+    transform: translateZ(0) scale(1) rotate(0deg);
+    filter: saturate(1);
+    border-width: 2px;
+    box-shadow: none;
+  }
+  15% {
+    transform: translateZ(0) scale(0.85) rotate(-8deg);
+    border-width: 2px;
+    box-shadow: none;
+  }
+  35% {
+    transform: translateZ(0) scale(1.15) rotate(8deg);
+    filter: saturate(1.35);
+    border-width: 4px;
+    box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.95),
+      0 0 40px 18px rgba(245, 158, 11, 0.85),
+      0 0 60px 22px rgba(245, 158, 11, 0.7),
+      0 0 80px 26px rgba(245, 158, 11, 0.55),
+      0 0 100px 30px rgba(245, 158, 11, 0.4),
+      0 0 120px 34px rgba(245, 158, 11, 0.25);
+  }
+  55% {
+    transform: translateZ(0) scale(1.1) rotate(-4deg);
+    filter: saturate(1.25);
+    border-width: 3.5px;
+    box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.8),
+      0 0 32px 14px rgba(245, 158, 11, 0.7),
+      0 0 52px 18px rgba(245, 158, 11, 0.55),
+      0 0 72px 22px rgba(245, 158, 11, 0.4);
+  }
+  75% {
+    transform: translateZ(0) scale(1.05) rotate(2deg);
+    filter: saturate(1.15);
+    border-width: 3px;
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.7),
+      0 0 24px 10px rgba(245, 158, 11, 0.6),
+      0 0 40px 14px rgba(245, 158, 11, 0.45);
   }
 }
 

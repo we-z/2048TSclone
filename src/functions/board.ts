@@ -247,6 +247,7 @@ export function updateBoard(
           animations.push({
             type: AnimationType.MERGE,
             index: finalIndex,
+            value: board[finalIndex], // Pass the merged tile value
           });
         }
       }

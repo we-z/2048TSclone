@@ -1,4 +1,4 @@
-import { Direction } from './Direction';
+import { Direction } from "./Direction";
 
 export enum AnimationType {
   NEW,
@@ -19,6 +19,7 @@ export interface AnimationNew extends AnimationModel {
 export interface AnimationMerge extends AnimationModel {
   type: AnimationType.MERGE;
   index: number;
+  value?: number; // The resulting tile value after merge
 }
 
 export interface AnimationMove extends AnimationModel {
