@@ -68,6 +68,12 @@ const Board: React.FC = () => {
             onUndo();
           }
           break;
+        case "n":
+        case "N":
+          // Start new game
+          e.preventDefault();
+          onReset();
+          break;
         case "Enter":
         case " ":
           // Try again when game is over (defeat or victory)
