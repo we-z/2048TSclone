@@ -6,7 +6,7 @@ import { Direction } from "../types/Direction";
 import { BoardType } from "../functions/board";
 import { Animation, AnimationType } from "../types/Animations";
 import { animationDuration } from "../config";
-import { moveAction } from "../actions";
+import { moveAction, undoAction, resetAction } from "../actions";
 import BoardTile from "./BoardTile";
 import Overlay from "./Overlay";
 
@@ -15,11 +15,20 @@ const Board: React.FC = () => {
   const board = useSelector((state: StateType) => state.board);
   const boardSize = useSelector((state: StateType) => state.boardSize);
   const animations = useSelector((state: StateType) => state.animations);
+  const defeat = useSelector((state: StateType) => state.defeat);
+  const victory = useSelector((state: StateType) => state.victory);
+  const victoryDismissed = useSelector(
+    (state: StateType) => state.victoryDismissed
+  );
+  const previousBoard = useSelector((state: StateType) => state.previousBoard);
 
   const onMove = useCallback(
     (direction: Direction) => dispatch(moveAction(direction)),
     [dispatch]
   );
+
+  const onUndo = useCallback(() => dispatch(undoAction()), [dispatch]);
+  const onReset = useCallback(() => dispatch(resetAction()), [dispatch]);
 
   const [renderedBoard, setRenderedBoard] = useState(board);
   const [renderedAnimations, setRenderedAnimations] = useState<Animation[]>([]);
@@ -51,6 +60,21 @@ const Board: React.FC = () => {
           e.preventDefault();
           onMove(Direction.RIGHT);
           break;
+        case "u":
+        case "U":
+          // Undo only if not defeated and previous board exists
+          if (!defeat && previousBoard) {
+            e.preventDefault();
+            onUndo();
+          }
+          break;
+        case "Enter":
+          // Try again when game is over (defeat or victory)
+          if (defeat || (victory && !victoryDismissed)) {
+            e.preventDefault();
+            onReset();
+          }
+          break;
       }
     };
 
@@ -59,7 +83,15 @@ const Board: React.FC = () => {
     return () => {
       window.removeEventListener("keydown", keydownListener);
     };
-  }, [onMove]);
+  }, [
+    onMove,
+    onUndo,
+    onReset,
+    defeat,
+    victory,
+    victoryDismissed,
+    previousBoard,
+  ]);
 
   useEffect(() => {
     // Store the previous board state before processing animations
