@@ -69,6 +69,7 @@ const Board: React.FC = () => {
           }
           break;
         case "Enter":
+        case " ":
           // Try again when game is over (defeat or victory)
           if (defeat || (victory && !victoryDismissed)) {
             e.preventDefault();
